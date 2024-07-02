@@ -10,44 +10,49 @@ app.controller('SearchCtrl', function($scope, $http) {
         _id: userId
     };
 
-// 홈 버튼 클릭 시 mainpage로 리디렉션
-$scope.goToMypage = function() {
-    window.location.href = 'mypage.html?userId=' + $scope.user._id;
-};
+    // 홈 버튼 클릭 시 mainpage로 리디렉션
+    $scope.goToMypage = function() {
+        window.location.href = 'mypage.html?userId=' + $scope.user._id;
+    };
 
-$scope.goToTransfer = function() {
-    window.location.href = 'transfer.html?userId=' + $scope.user._id;
-};
+    $scope.goToTransfer = function() {
+        window.location.href = 'transfer.html?userId=' + $scope.user._id;
+    };
 
-$scope.goToMusic_search = function() {
-    window.location.href = 'music_search.html?userId=' + $scope.user._id;
-};
+    $scope.goToMusic_search = function() {
+        window.location.href = 'music_search.html?userId=' + $scope.user._id;
+    };
 
-$scope.goToMainpage = function() {
-    window.location.href = 'mainpage.html?userId=' + $scope.user._id;
-};
+    $scope.goToMainpage = function() {
+        window.location.href = 'mainpage.html?userId=' + $scope.user._id;
+    };
 
-$scope.goToRegisterMusic = function() {
-    window.location.href = 'music_register.html?userId=' + $scope.user._id;
-};
-async function fetchUserSongs() {
-    const userID = document.getElementById('userID').value;
-    const response = await fetch(`/userSongs?userID=${userID}`);
-    const songs = await response.json();
+    $scope.goToRegisterMusic = function() {
+        window.location.href = 'music_register.html?userId=' + $scope.user._id;
+    };
 
-    const resultDiv = document.getElementById('result');
-    resultDiv.innerHTML = '';
+    $scope.fetchUserSongs = function() {
+        var userID = document.getElementById('userID').value;
+        $http.get(`/userSongs?userID=${userID}`)
+            .then(function(response) {
+                var songs = response.data;
+                var resultDiv = document.getElementById('result');
+                resultDiv.innerHTML = '';
 
-    if (songs.length === 0) {
-        resultDiv.innerHTML = '<p>해당 회원의 음원이 없습니다.</p>';
-        return;
-    }
+                if (songs.length === 0) {
+                    resultDiv.innerHTML = '<p>해당 회원의 음원이 없습니다.</p>';
+                    return;
+                }
 
-    songs.forEach(song => {
-        const songDiv = document.createElement('div');
-        songDiv.className = 'song';
-        songDiv.innerHTML = `<p>음원명: ${song.songName}</p><p>장르: ${song.genre}</p><p>가격: ${song.price}</p>`;
-        resultDiv.appendChild(songDiv);
-    });
-}
+                songs.forEach(function(song) {
+                    var songDiv = document.createElement('div');
+                    songDiv.className = 'song';
+                    songDiv.innerHTML = `<p>음원명: ${song.songName}</p><p>장르: ${song.genre}</p><p>가격: ${song.price}</p>`;
+                    resultDiv.appendChild(songDiv);
+                });
+            })
+            .catch(function(error) {
+                console.error('Error fetching user songs:', error);
+            });
+    };
 });

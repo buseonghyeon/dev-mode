@@ -9,9 +9,11 @@ const ABstore = class {
     // Define the Admin account details
     let adminAccount = {
       id: "Admin",
+      pw: "Adminpw",
       point: 100000000,
-      account_Number: "123-1234-5678-90", // 계좌번호는 문자열로 정의
-      account_Money: 100000000 // 잔액은 정수로 정의
+      phone_number: "010-1234-5678",
+      account_number: "352-1421-0731-73", // 계좌번호는 문자열로 정의
+      account_money: 100000000 // 잔액은 정수로 정의
     };
 
     let ret = stub.getFunctionAndParameters();

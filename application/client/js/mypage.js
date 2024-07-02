@@ -89,11 +89,19 @@ app.controller('MypageCtrl', function($scope, appFactory) {
                         $('#chargeModal').modal('hide');
                     });
                 } else {
-                    alert('충전 실패: ' + response.data.message);
+                    Swal.fire({
+                        title: '충전 실패',
+                        text: response.data.message,
+                        icon: 'error',
+                    });
                 }
             });
         } else {
-            alert('올바른 금액을 입력하세요.');
+            Swal.fire({
+                title: '충전 실패',
+                text: '올바른 금액을 입력하세요.',
+                icon: 'error',
+            });
         }
     };
 
@@ -114,11 +122,19 @@ app.controller('MypageCtrl', function($scope, appFactory) {
                         $('#exchangeModal').modal('hide');
                     });
                 } else {
-                    alert('환전 실패: ' + response.data.message);
+                    Swal.fire({
+                        title: '환전 실패',
+                        text: response.data.message,
+                        icon: 'error',
+                    });
                 }
             });
         } else {
-            alert('올바른 금액을 입력하세요.');
+            Swal.fire({
+                title: '환전 실패',
+                text: '올바른 금액을 입력하세요.',
+                icon: 'error',
+            });
         }
     };
 
@@ -126,31 +142,62 @@ app.controller('MypageCtrl', function($scope, appFactory) {
         window.location.href = `music_edit.html?songId=${songId}&userId=${$scope.user._id}`;
     };
 
-    let songToDelete = null;
+    var form = document.getElementById('registerForm');
+    form.addEventListener('submit', function(event) {
+     event.preventDefault(); // 폼의 기본 제출 동작을 막음
 
-    $scope.confirmDeleteSong = function(songId) {
-        songToDelete = songId;
-        $('#deleteConfirmModal').modal('show');
-    };
+     var formData = new FormData(form);
 
-    $scope.deleteSongConfirmed = function() {
-        if (songToDelete) {
-            appFactory.deleteSong({ songId: songToDelete }, function(response) {
-                if (response.data.success) {
-                    Swal.fire({
-                        title: '삭제 완료',
-                        text: '음원이 삭제되었습니다.',
-                        icon: 'success',
-                    }).then(() => {
-                        $('#deleteConfirmModal').modal('hide');
-                        location.reload();
-                    });
-                } else {
-                    alert('삭제 실패: ' + response.data.message);
-                }
-            });
-        }
-    };
+     // 폼 데이터를 서버로 전송
+     fetch(form.action, {
+         method: 'POST',
+         body: formData
+     }).then(function(response) {
+         return response.json();
+     }).then(function(data) {
+         console.log('등록 성공:', data);
+         Swal.fire({
+             title: '등록 완료',
+             text: '음원이 성공적으로 등록되었습니다.',
+             icon: 'success'
+         }).then(() => {
+             window.location.href = 'mypage.html?userId=' + userId; // 마이페이지로 리디렉션
+         });
+     }).catch(function(error) {
+         console.error('등록 실패:', error);
+         Swal.fire({
+             title: '등록 실패',
+             text: '음원 등록에 실패했습니다.',
+             icon: 'error'
+         });
+     });
+ });
+
+ let songToDelete = null;
+
+ $scope.confirmDeleteSong = function(songId) {
+     songToDelete = songId;
+     $('#deleteConfirmModal').modal('show');
+ };
+
+ $scope.deleteSongConfirmed = function() {
+    if (songToDelete) {
+        appFactory.deleteSong({ songId: songToDelete }, function(response) {
+            if (response.status === 200) {
+                Swal.fire({
+                  title: '삭제 완료',
+                  text: '음원이 삭제되었습니다.',
+                  icon: 'success',
+                }).then(() => {
+                    $('#deleteConfirmModal').modal('hide');
+                    location.reload(); // 페이지 리로드
+                });
+            } else {
+                alert('삭제 실패: ' + response.data);
+            }
+        });
+    }
+};
 });
 
 app.factory('appFactory', function($http) {
@@ -185,12 +232,11 @@ app.factory('appFactory', function($http) {
     };
 
     factory.deleteSong = function(data, callback) {
-        $http.post('/deleteMusic', data).then(function(response) {
+        $http.post('/deleteMusic', data).then(function(response) {  // POST 요청으로 변경
             callback(response);
-        }).catch(function(error) {
-            console.error('Error during delete song:', error);
         });
     };
+
 
     return factory;
 });
