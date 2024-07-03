@@ -296,7 +296,7 @@ app.post('/charge', async function (req, res) {
 
     user.account_money -= amount;
     user.point += amount;
-    admin.account_Money += amount;
+    admin.account_money += amount;
     admin.point -= amount;
 
     await userDb.insert(user);
@@ -337,13 +337,13 @@ app.post('/exchange', async function (req, res) {
 
     let exchangeAmount = amount * 0.9;
 
-    if (admin.account_Money < exchangeAmount) {
+    if (admin.account_money < exchangeAmount) {
       return res.status(400).json({ success: false, message: 'Insufficient funds in admin account' });
     }
 
     user.point -= amount;
     user.account_money += exchangeAmount;
-    admin.account_Money -= exchangeAmount;
+    admin.account_money -= exchangeAmount;
     admin.point += amount;
 
     await userDb.insert(user);

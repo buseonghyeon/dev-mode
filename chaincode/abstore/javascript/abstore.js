@@ -154,7 +154,7 @@ const ABstore = class {
 
     user.account_money -= amount;
     user.point += amount;
-    admin.account_Money += amount;
+    admin.account_money += amount;
     admin.point -= amount;
 
     await stub.putState(userId, Buffer.from(JSON.stringify(user)));
@@ -199,7 +199,7 @@ const ABstore = class {
     }
 
     user.account_money += exchangeAmount;
-    admin.account_Money -= exchangeAmount;
+    admin.account_money -= exchangeAmount;
 
     await stub.putState(userId, Buffer.from(JSON.stringify(user)));
     await stub.putState('Admin', Buffer.from(JSON.stringify(admin)));
@@ -294,8 +294,8 @@ const ABstore = class {
      let response = {
        id: adminAccount.id,
        point: adminAccount.point,
-       account_Number: adminAccount.account_Number,
-       account_Money: adminAccount.account_Money
+       account_Number: adminAccount.account_number,
+       account_Money: adminAccount.account_money
      };
 
     jsonResp.name = A;
